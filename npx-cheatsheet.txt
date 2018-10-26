@@ -1,0 +1,21 @@
+# Make a call to your fn locally w/ query parameters:
+
+npx sls invoke local -f app --data '{ "queryStringParameters": {"name":"JD"}}'
+
+Config:
+
+functions:
+  app:
+    handler: index-prod.handler
+    events:
+      - http:
+        method: get
+        path: ANY /
+        request:
+          template:
+            application/json: >
+              {
+                "name": "$input.params('name')"
+              }
+
+(in express, comes in as req.query.name like any other normal query params)

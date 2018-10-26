@@ -1,13 +1,22 @@
-service: jd-test-graphql-api
+service: jd-test-lambda-node
 
 provider:
   name: aws
   region: us-west-2
-  runtie: nodejs8.10
+  runtime: nodejs8.10
 
 functions:
   app:
     handler: index-prod.handler
     events:
-      - http: ANY /
-      - http: 'ANY {proxy+}'
+      - http:
+          path: /
+          method: get
+          request:
+            template:
+              application/json: >
+                {
+                  "name": "$input.params('name')"
+                }
+      #- http: ANY /
+      #- http: 'ANY {proxy+}'

@@ -8,7 +8,7 @@
     "AppLogGroup": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
-        "LogGroupName": "/aws/lambda/jd-test-graphql-api-dev-app"
+        "LogGroupName": "/aws/lambda/jd-test-lambda-node-dev-app"
       }
     },
     "IamRoleLambdaExecution": {
@@ -37,7 +37,7 @@
                 "-",
                 [
                   "dev",
-                  "jd-test-graphql-api",
+                  "jd-test-lambda-node",
                   "lambda"
                 ]
               ]
@@ -52,7 +52,7 @@
                   ],
                   "Resource": [
                     {
-                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/jd-test-graphql-api-dev-app:*"
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/jd-test-lambda-node-dev-app:*"
                     }
                   ]
                 },
@@ -63,7 +63,7 @@
                   ],
                   "Resource": [
                     {
-                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/jd-test-graphql-api-dev-app:*:*"
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/jd-test-lambda-node-dev-app:*:*"
                     }
                   ]
                 }
@@ -76,7 +76,7 @@
           "Fn::Join": [
             "-",
             [
-              "jd-test-graphql-api",
+              "jd-test-lambda-node",
               "dev",
               "us-west-2",
               "lambdaRole"
@@ -92,9 +92,9 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/jd-test-graphql-api/dev/1540578038440-2018-10-26T18:20:38.440Z/jd-test-graphql-api.zip"
+          "S3Key": "serverless/jd-test-lambda-node/dev/1540587439658-2018-10-26T20:57:19.658Z/jd-test-lambda-node.zip"
         },
-        "FunctionName": "jd-test-graphql-api-dev-app",
+        "FunctionName": "jd-test-lambda-node-dev-app",
         "Handler": "index-prod.handler",
         "MemorySize": 1024,
         "Role": {
@@ -103,7 +103,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs4.3",
+        "Runtime": "nodejs8.10",
         "Timeout": 6
       },
       "DependsOn": [
@@ -111,20 +111,20 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "AppLambdaVersion76FziaOtRamOnxMRM4oooacOvrAAS7qngDAONNtGs": {
+    "AppLambdaVersionObxZDb7GGkWeD8h5yDPoKoNlPEMGE8CwTOHZNFF8A": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "AppLambdaFunction"
         },
-        "CodeSha256": "wFaZfyV1c1lB8EfJ77xM0LkKHg6v0PNm13fwlg1rIpY="
+        "CodeSha256": "h92eSUqiOlnzC8ArDZkfYHLPJc67EzVCet9NgSiGRHM="
       }
     },
     "ApiGatewayRestApi": {
       "Type": "AWS::ApiGateway::RestApi",
       "Properties": {
-        "Name": "dev-jd-test-graphql-api",
+        "Name": "dev-jd-test-lambda-node",
         "EndpointConfiguration": {
           "Types": [
             "EDGE"
@@ -132,25 +132,10 @@
         }
       }
     },
-    "ApiGatewayResourceProxyVar": {
-      "Type": "AWS::ApiGateway::Resource",
-      "Properties": {
-        "ParentId": {
-          "Fn::GetAtt": [
-            "ApiGatewayRestApi",
-            "RootResourceId"
-          ]
-        },
-        "PathPart": "{proxy+}",
-        "RestApiId": {
-          "Ref": "ApiGatewayRestApi"
-        }
-      }
-    },
-    "ApiGatewayMethodAny": {
+    "ApiGatewayMethodGet": {
       "Type": "AWS::ApiGateway::Method",
       "Properties": {
-        "HttpMethod": "ANY",
+        "HttpMethod": "GET",
         "RequestParameters": {},
         "ResourceId": {
           "Fn::GetAtt": [
@@ -193,50 +178,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayMethodProxyVarAny": {
-      "Type": "AWS::ApiGateway::Method",
-      "Properties": {
-        "HttpMethod": "ANY",
-        "RequestParameters": {},
-        "ResourceId": {
-          "Ref": "ApiGatewayResourceProxyVar"
-        },
-        "RestApiId": {
-          "Ref": "ApiGatewayRestApi"
-        },
-        "ApiKeyRequired": false,
-        "AuthorizationType": "NONE",
-        "Integration": {
-          "IntegrationHttpMethod": "POST",
-          "Type": "AWS_PROXY",
-          "Uri": {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition"
-                },
-                ":apigateway:",
-                {
-                  "Ref": "AWS::Region"
-                },
-                ":lambda:path/2015-03-31/functions/",
-                {
-                  "Fn::GetAtt": [
-                    "AppLambdaFunction",
-                    "Arn"
-                  ]
-                },
-                "/invocations"
-              ]
-            ]
-          }
-        },
-        "MethodResponses": []
-      }
-    },
-    "ApiGatewayDeployment1540578038460": {
+    "ApiGatewayDeployment1540587439677": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -245,8 +187,7 @@
         "StageName": "dev"
       },
       "DependsOn": [
-        "ApiGatewayMethodAny",
-        "ApiGatewayMethodProxyVarAny"
+        "ApiGatewayMethodGet"
       ]
     },
     "AppLambdaPermissionApiGateway": {
@@ -306,7 +247,7 @@
     "AppLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "AppLambdaVersion76FziaOtRamOnxMRM4oooacOvrAAS7qngDAONNtGs"
+        "Ref": "AppLambdaVersionObxZDb7GGkWeD8h5yDPoKoNlPEMGE8CwTOHZNFF8A"
       }
     },
     "ServiceEndpoint": {
