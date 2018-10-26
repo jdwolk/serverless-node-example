@@ -1,0 +1,13 @@
+service: jd-test-graphql-api
+
+provider:
+  name: aws
+  region: us-west-2
+  runtie: nodejs8.10
+
+functions:
+  app:
+    handler: index-prod.handler
+    events:
+      - http: ANY /
+      - http: 'ANY {proxy+}'
